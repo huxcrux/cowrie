@@ -14,7 +14,7 @@ from twisted.internet.defer import inlineCallbacks
 from twisted.python import log
 from twisted.web.iweb import UNKNOWN_LENGTH
 
-import treq
+import cowrie.core.cached_treq as cached_treq
 
 from cowrie.core.artifact import Artifact
 from cowrie.core.config import CowrieConfig
@@ -171,7 +171,7 @@ class Command_wget(HoneyPotCommand):
         # if CowrieConfig.has_option("honeypot", "out_addr"):
         #     out_addr = (CowrieConfig.get("honeypot", "out_addr"), 0)
 
-        deferred = treq.get(url=url, allow_redirects=True, headers=headers, timeout=10)
+        deferred = cached_treq.get(url=url, allow_redirects=True, headers=headers, timeout=10)
         return deferred
 
     def handle_CTRL_C(self) -> None:
@@ -220,7 +220,7 @@ class Command_wget(HoneyPotCommand):
             else:
                 self.errorWrite(f"Saving to: `{self.outfile}'\n\n")
 
-        deferred = treq.collect(response, self.collect)
+        deferred = cached_treq.collect(response, self.collect)
         deferred.addCallback(self.collectioncomplete)
         return deferred
 

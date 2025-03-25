@@ -11,7 +11,7 @@ from twisted.internet import error
 from twisted.internet.defer import inlineCallbacks
 from twisted.python import log
 
-import treq
+import cowrie.core.cached_treq as cached_treq
 
 from cowrie.core.artifact import Artifact
 from cowrie.core.network import communication_allowed
@@ -302,7 +302,7 @@ class Command_curl(HoneyPotCommand):
         # if CowrieConfig.has_option("honeypot", "out_addr"):
         #     out_addr = (CowrieConfig.get("honeypot", "out_addr"), 0)
 
-        deferred = treq.get(url=url, allow_redirects=False, headers=headers, timeout=10)
+        deferred = cached_treq.get(url=url, allow_redirects=False, headers=headers, timeout=10)
         return deferred
 
     def handle_CTRL_C(self) -> None:
@@ -330,7 +330,7 @@ class Command_curl(HoneyPotCommand):
                 "                                 Dload  Upload   Total   Spent    Left  Speed\n"
             )
 
-        deferred = treq.collect(response, self.collect)
+        deferred = cached_treq.collect(response, self.collect)
         deferred.addCallback(self.collectioncomplete)
         return deferred
 
